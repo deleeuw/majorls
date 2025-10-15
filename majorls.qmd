@@ -58,15 +58,69 @@ appreciated, but is not required. The files can be found at
 
 # Introduction
 
-# Positive Definite Weights
+## Majorization
 
-$$
-\sigma(y)=(x-y)'W(x-y)
-$$
+# General
 
-Wiuth $W\gtrsim 0$. Minimize over $y\in\mathcal{Y}$.
+The components of our problem are
+
+* $x$, a vector with $n$ elements, 
+* $W$, a positive semi-definite matrix of order $n$, 
+* $\mathcal{Y}$, some subset of $\mathbb{R}^n$.
+
+Define the least squares loss function
+$$
+\sigma(y):=\tfrac12(x-y)'W(x-y).
+$$
+Our problem is to minimize $\sigma$ over $y\in\mathcal{Y}$.
+
+Suppose $\tilde y$ is some element of $\mathcal{Y}$, with loss function value
+$\sigma(\tilde y)$. We want to find an element of $\mathcal{Y}$ which is
+better than $\tilde y$, i.e. has a lower value of loss.
+Because $y=\tilde y+(y-\tilde y)$ we have
+\begin{equation}
+\sigma(y)=
+\sigma(\tilde y)-2(y-\tilde y)'W(x-\tilde y)+(y-\tilde y)'W(y - \tilde y)
+\end{equation}
+Suppose $V$ is another positive semidefinite matrix with $V\gtrsim W$ in the Loewner sense, i.e $V-W$ is positive semidefinite.
+Define 
+\begin{equation}
+\eta(y,\tilde y):=
+\sigma(\tilde y)-2(y-\tilde y)'W(x-\tilde y)+(y-\tilde y)'V(y - \tilde y)
+\end{equation}
+then $\sigma(y)\leq\eta(y,\tilde y)$ with equality if $y=\tilde y$. 
+Now suppose $y^+$ minimizes $\eta(y,\tilde y)$ over $\mathcal{Y}$. Then
+\begin{equation}
+\sigma(y^+)\leq\eta(y^+,\tilde y)\leq\eta(\tilde y,\tilde y)=\sigma(\tilde y)
+\end{equation}
+This is the *sandwich inequality* from majorization theory, which says that a
+majorization step decreases the loss function value. 
+
+Suppose $y^+\neq\tilde y$. Then the inequality
+$\sigma(y^+)\leq\eta(y^+,\tilde y)$ is strict if the minimum of $\eta(y,\tilde y)$
+is unique, which will be the case if $V$ is positive definite. The second inequality $\eta(y^+,\tilde y)\leq\eta(\tilde y,\tilde y)$ is strict if
+$V-W$ is positive definite. Since $W$ is positive semidefinite both inequalities are strict if $V-W$ is positive definite.
+
+\begin{equation}
+y^{(k+1)}\in\mathop{\text{argmin}}_{y\in\mathcal{Y}}\eta(y,y^{(k)})
+\end{equation}
+
+Completing the square. Let $z:=V^{-1}W(x-\tilde y)=V^{-1}\nabla\sigma(\tilde y)$
+$$
+\eta(y,\tilde y)=
+\sigma(\tilde y)-2(y-\tilde y)'Vz+(y-\tilde y)'V(y - \tilde y)=
+\sigma(\tilde y)+(y-(\tilde y+z))'V(y-(\tilde y+z))-z'Vz
+$$
+$$
+y^{(k+1)}\in\Pi_\mathcal{Y}^V(\tilde y+z)
+$$
+$$
+z=\theta V^{-1}W(x-\tilde y)
+$$
 
 ## Scalar Majorization
+
+$V=\nu D$. $\nu D\gtrsim W$ $\nu I\gtrsim D^{-1}W$ $\nu\geq\lambda_{\text{max}}(D^{-1}W)$
 
 ## Diagonal Majorization
 
