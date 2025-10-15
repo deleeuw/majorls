@@ -7,5 +7,7 @@
 *.aux
 *.md
 *.Rproj
+*.log
+*.toc
 !README.md
 /literature

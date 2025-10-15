@@ -1,2 +1,2 @@
 # majorls
-Majorization of Least Squares Loss functions
+Majorization of least squares loss functions
