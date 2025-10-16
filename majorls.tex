@@ -285,13 +285,16 @@ inequalities are strict if \(V-W\) is positive definite.
 y^{(k+1)}\in\mathop{\text{argmin}}_{y\in\mathcal{Y}}\eta(y,y^{(k)})
 \end{equation}
 
-Completing the square. Let \(z=V^{-1}W(x-\tilde y)\) \[
+Completing the square. Let
+\(z:=V^{-1}W(x-\tilde y)=V^{-1}\nabla\sigma(\tilde y)\) \[
 \eta(y,\tilde y)=
 \sigma(\tilde y)-2(y-\tilde y)'Vz+(y-\tilde y)'V(y - \tilde y)=
 \sigma(\tilde y)+(y-(\tilde y+z))'V(y-(\tilde y+z))-z'Vz
 \] \[
-y^{(k+1)}\in\Pi_\mathcal{Y}^V(\tilde y+z)
-\] Relax
+y^{(k+1)}\in\Pi_{\mathcal{Y}}^V(\tilde y+z)
+\] \[
+z=\theta V^{-1}W(x-\tilde y)
+\]
 
 \subsection{Scalar Majorization}\label{scalar-majorization}
 

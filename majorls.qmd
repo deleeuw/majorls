@@ -112,7 +112,7 @@ $$
 \sigma(\tilde y)+(y-(\tilde y+z))'V(y-(\tilde y+z))-z'Vz
 $$
 $$
-y^{(k+1)}\in\Pi_\mathcal{Y}^V(\tilde y+z)
+y^{(k+1)}\in\Pi_{\mathcal{Y}}^V(\tilde y+z)
 $$
 $$
 z=\theta V^{-1}W(x-\tilde y)
@@ -123,6 +123,20 @@ $$
 $V=\nu D$. $\nu D\gtrsim W$ $\nu I\gtrsim D^{-1}W$ $\nu\geq\lambda_{\text{max}}(D^{-1}W)$
 
 ## Diagonal Majorization
+
+Find the smallest diagonal matrix $V\gtrsim W$. We define "smallest" as
+minimizing the trace $\text{tr}\ V$.
+Minimizing $f$ over $V\gtrsim W$ is a convex problem, which we can
+formulate as the linear semi-infinite problem of minimizing $f$
+over $V$ that satisfies $x'Vx\geq x'Wx$ for all $x'x=1$.
+
+The R program .. is a simple cutting plane algorithm to do just that.
+It is not optimized in any way, and it will probably fail for large 
+$n$. We start with the $n$ inequalities $v\geq w$, where $v:=\text{diag(v)}$ and $w:=\text{diag(W)}$. This gives $v^{(1)}=w$ and $f(v^{(1)})=\text{tr}(W)$.
+If we have a solution $v^{(k)}$ then we compute the smallest eigenvalue
+of $\lambda_{\text{min}}(V^{(k)}-W)$ and the corresponding eigenvector $x^{(k)}$. If
+the eigenvalue
+
 
 ## Examples
 
