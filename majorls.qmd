@@ -79,9 +79,10 @@ Our problem is to minimize $\sigma$ over $y\in\mathcal{Y}$.
 Suppose $\tilde y$ is some element of $\mathcal{Y}$, with loss function value
 $\sigma(\tilde y)$. We want to find an element of $\mathcal{Y}$ which is
 better than $\tilde y$, i.e. has a lower value of loss.
+ in the Loewner sense, i.e $V-W$ is positive semidefinite. 
 
 ::: {#lem-major}
-Suppose $V\gtrsim W$ in the Loewner sense, i.e $V-W$ is positive semidefinite. Define $z:=V^{-1}W(x-\tilde y)$ and $y^+:=\tilde y+\theta z$, with $0\leq\theta\leq 2$. Then $\sigma(y^+)\leq\sigma(\tilde y)$.
+Suppose $V\gtrsim W$.Define $z:=V^{-1}W(x-\tilde y)$ and $y^+:=\tilde y+\theta z$, with $0\leq\theta\leq 2$. Then $\sigma(y^+)\leq\sigma(\tilde y)$.
 :::
 
 ::: {.proof}
