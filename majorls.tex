@@ -95,6 +95,39 @@
 \makeatother
 
 
+% definitions for citeproc citations
+\NewDocumentCommand\citeproctext{}{}
+\NewDocumentCommand\citeproc{mm}{%
+  \begingroup\def\citeproctext{#2}\cite{#1}\endgroup}
+\makeatletter
+ % allow citations to break across lines
+ \let\@cite@ofmt\@firstofone
+ % avoid brackets around text for \cite:
+ \def\@biblabel#1{}
+ \def\@cite#1#2{{#1\if@tempswa , #2\fi}}
+\makeatother
+\newlength{\cslhangindent}
+\setlength{\cslhangindent}{1.5em}
+\newlength{\csllabelwidth}
+\setlength{\csllabelwidth}{3em}
+\newenvironment{CSLReferences}[2] % #1 hanging-indent, #2 entry-spacing
+ {\begin{list}{}{%
+  \setlength{\itemindent}{0pt}
+  \setlength{\leftmargin}{0pt}
+  \setlength{\parsep}{0pt}
+  % turn on hanging indent if param 1 is 1
+  \ifodd #1
+   \setlength{\leftmargin}{\cslhangindent}
+   \setlength{\itemindent}{-1\cslhangindent}
+  \fi
+  % set entry spacing
+  \setlength{\itemsep}{#2\baselineskip}}}
+ {\end{list}}
+\usepackage{calc}
+\newcommand{\CSLBlock}[1]{\hfill\break\parbox[t]{\linewidth}{\strut\ignorespaces#1\strut}}
+\newcommand{\CSLLeftMargin}[1]{\parbox[t]{\csllabelwidth}{\strut#1\strut}}
+\newcommand{\CSLRightInline}[1]{\parbox[t]{\linewidth - \csllabelwidth}{\strut#1\strut}}
+\newcommand{\CSLIndent}[1]{\hspace{\cslhangindent}#1}
 
 
 
@@ -184,6 +217,15 @@
 \@ifundefined{c@chapter}{\newfloat{codelisting}{h}{lop}}{\newfloat{codelisting}{h}{lop}[chapter]}
 \floatname{codelisting}{Listing}
 \newcommand*\listoflistings{\listof{codelisting}{List of Listings}}
+\usepackage{amsthm}
+\theoremstyle{plain}
+\newtheorem{lemma}{Lemma}[section]
+\theoremstyle{remark}
+\AtBeginDocument{\renewcommand*{\proofname}{Proof}}
+\newtheorem*{remark}{Remark}
+\newtheorem*{solution}{Solution}
+\newtheorem{refremark}{Remark}[section]
+\newtheorem{refsolution}{Solution}[section]
 \makeatother
 \makeatletter
 \makeatother
@@ -207,7 +249,7 @@
 
 \title{Majorizing Least Squares Loss functions}
 \author{Jan de Leeuw}
-\date{October 15, 2025}
+\date{October 16, 2025}
 \begin{document}
 \maketitle
 \begin{abstract}
@@ -233,11 +275,7 @@ can be found at \url{https://github.com/deleeuw/majorls}
 
 \section{Introduction}\label{introduction}
 
-\subsection{Majorization}\label{majorization}
-
-\section{General}\label{general}
-
-The components of our problem are
+The data of our problem are
 
 \begin{itemize}
 \tightlist
@@ -253,23 +291,40 @@ Define the least squares loss function \[
 \sigma(y):=\tfrac12(x-y)'W(x-y).
 \] Our problem is to minimize \(\sigma\) over \(y\in\mathcal{Y}\).
 
+\sectionbreak
+
+\section{Majorization}\label{majorization}
+
+\subsection{General}\label{general}
+
 Suppose \(\tilde y\) is some element of \(\mathcal{Y}\), with loss
 function value \(\sigma(\tilde y)\). We want to find an element of
 \(\mathcal{Y}\) which is better than \(\tilde y\), i.e.~has a lower
-value of loss. Because \(y=\tilde y+(y-\tilde y)\) we have
-\begin{equation}
+value of loss.
+
+\begin{lemma}[]\protect\hypertarget{lem-major}{}\label{lem-major}
+
+Suppose \(V\gtrsim W\) in the Loewner sense, i.e \(V-W\) is positive
+semidefinite. Define \(z:=V^{-1}W(x-\tilde y)\) and
+\(y^+:=\tilde y+\theta z\), with \(0\leq\theta\leq 2\). Then
+\(\sigma(y^+)\leq\sigma(\tilde y)\).
+
+\end{lemma}
+
+\begin{proof}
+Because \(y=\tilde y+(y-\tilde y)\) we have \begin{equation}
 \sigma(y)=
-\sigma(\tilde y)-2(y-\tilde y)'W(x-\tilde y)+(y-\tilde y)'W(y - \tilde y)
-\end{equation} Suppose \(V\) is another positive semidefinite matrix
-with \(V\gtrsim W\) in the Loewner sense, i.e \(V-W\) is positive
-semidefinite. Define \begin{equation}
+\sigma(\tilde y)-2(y-\tilde y)'W(x-\tilde y)+(y-\tilde y)'W(y - \tilde y).
+\end{equation} Define \begin{equation}
 \eta(y,\tilde y):=
-\sigma(\tilde y)-2(y-\tilde y)'W(x-\tilde y)+(y-\tilde y)'V(y - \tilde y)
+\sigma(\tilde y)-2(y-\tilde y)'W(x-\tilde y)+(y-\tilde y)'V(y - \tilde y).
 \end{equation} then \(\sigma(y)\leq\eta(y,\tilde y)\) with equality if
-\(y=\tilde y\). Now suppose \(y^+\) minimizes \(\eta(y,\tilde y)\) over
-\(\mathcal{Y}\). Then \begin{equation}
-\sigma(y^+)\leq\eta(y^+,\tilde y)\leq\eta(\tilde y,\tilde y)=\sigma(\tilde y)
-\end{equation} This is the \emph{sandwich inequality} from majorization
+\(y=\tilde y\). Now \(y^+-\tilde y=\theta z\) and thus \begin{equation}
+\sigma(y^+)\leq\eta(y^+,\tilde y)=\sigma(\tilde y)+(\theta^2-2\theta)z'Vz\leq \sigma(\tilde y).
+\end{equation}
+\end{proof}
+
+majorization This is the \emph{sandwich inequality} from majorization
 theory, which says that a majorization step decreases the loss function
 value.
 
@@ -303,11 +358,53 @@ z=\theta V^{-1}W(x-\tilde y)
 
 \subsection{Diagonal Majorization}\label{diagonal-majorization}
 
+Find the smallest diagonal matrix \(V\gtrsim W\). We define ``smallest''
+as minimizing the trace \(\text{tr}\ V\). Minimizing \(f\) over
+\(V\gtrsim W\) is a convex problem, which we can formulate as the linear
+semi-infinite problem of minimizing \(f\) over \(V\) that satisfies
+\(x'Vx\geq x'Wx\) for all \(x'x=1\).
+
+The R program myCutter() is a simple cutting plane algorithm to do just
+that. It is not optimized in any way, and it will probably fail for
+large \(n\). The basic idea is to approximate the feasible region
+\(V\gtrsim W\) from the outside by a compact convex polyhedron. We start
+with the \(n\) inequalities \(v_{ii}\geq w_{ii}\). Then minimize the
+objective function by linear programming (using lpSolve, Berkelaar
+(\citeproc{ref-berkelaar_24}{2024})). This will give a minimum attained
+at a vertex of the polyhedron. At this vertex the smallest eigenvalue
+(computed with RSpectra, Qiu and Mei (\citeproc{ref-qiu_mei_24}{2024}))
+of \(V-W\) will be negative. If \(x\) is the corresponding normalized
+eigenvector then we add the contraint \(x'Vx\geq x'Wx\) and solve the
+linear program with this added inequality, which cuts off the vertex
+that defined the current solution. The minimum valueof the loss function
+will increase, and we continue until we have convergence.
+
+Thus the number of inequality constraints increases by one in each
+iteration. The algorithm is wasteful because it does not prune the
+inequalities, and because each linear programming solution is started
+from scratch, without taking into account that two successive programs
+only differ by one inequality constraint.
+
 \subsection{Examples}\label{examples}
 
 \subsubsection{Linear Regression}\label{linear-regression}
 
-\subsubsection{Low-rank Approximation}\label{low-rank-approximation}
+\subsubsection*{Low-rank Approximation}\label{low-rank-approximation}
+\addcontentsline{toc}{subsubsection}{Low-rank Approximation}
+
+\phantomsection\label{refs}
+\begin{CSLReferences}{1}{0}
+\bibitem[\citeproctext]{ref-berkelaar_24}
+Berkelaar, Michel. 2024. \emph{lpSolve: Interface to 'Lp\_solve' v. 5.5
+to Solve Linear/Integer Programs}.
+\url{https://doi.org/10.32614/CRAN.package.lpSolve}.
+
+\bibitem[\citeproctext]{ref-qiu_mei_24}
+Qiu, Y., and J. Mei. 2024. \emph{{RSpectra: Solvers for Large-Scale
+Eigenvalue and SVD Problems}}.
+\url{https://CRAN.R-project.org/package=RSpectra}.
+
+\end{CSLReferences}
 
 
 

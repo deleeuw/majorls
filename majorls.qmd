@@ -58,11 +58,7 @@ appreciated, but is not required. The files can be found at
 
 # Introduction
 
-## Majorization
-
-# General
-
-The components of our problem are
+The data of our problem are
 
 * $x$, a vector with $n$ elements, 
 * $W$, a positive semi-definite matrix of order $n$, 
@@ -74,25 +70,40 @@ $$
 $$
 Our problem is to minimize $\sigma$ over $y\in\mathcal{Y}$.
 
+\sectionbreak
+
+# Majorization
+
+## General
+
 Suppose $\tilde y$ is some element of $\mathcal{Y}$, with loss function value
 $\sigma(\tilde y)$. We want to find an element of $\mathcal{Y}$ which is
 better than $\tilde y$, i.e. has a lower value of loss.
+
+::: {#lem-major}
+Suppose $V\gtrsim W$ in the Loewner sense, i.e $V-W$ is positive semidefinite. Define $z:=V^{-1}W(x-\tilde y)$ and $y^+:=\tilde y+\theta z$, with $0\leq\theta\leq 2$. Then $\sigma(y^+)\leq\sigma(\tilde y)$.
+:::
+
+::: {.proof}
 Because $y=\tilde y+(y-\tilde y)$ we have
 \begin{equation}
 \sigma(y)=
-\sigma(\tilde y)-2(y-\tilde y)'W(x-\tilde y)+(y-\tilde y)'W(y - \tilde y)
+\sigma(\tilde y)-2(y-\tilde y)'W(x-\tilde y)+(y-\tilde y)'W(y - \tilde y).
 \end{equation}
-Suppose $V$ is another positive semidefinite matrix with $V\gtrsim W$ in the Loewner sense, i.e $V-W$ is positive semidefinite.
 Define 
 \begin{equation}
 \eta(y,\tilde y):=
-\sigma(\tilde y)-2(y-\tilde y)'W(x-\tilde y)+(y-\tilde y)'V(y - \tilde y)
+\sigma(\tilde y)-2(y-\tilde y)'W(x-\tilde y)+(y-\tilde y)'V(y - \tilde y).
 \end{equation}
-then $\sigma(y)\leq\eta(y,\tilde y)$ with equality if $y=\tilde y$. 
-Now suppose $y^+$ minimizes $\eta(y,\tilde y)$ over $\mathcal{Y}$. Then
+then $\sigma(y)\leq\eta(y,\tilde y)$ with equality if $y=\tilde y$.
+Now $y^+-\tilde y=\theta z$ and thus
 \begin{equation}
-\sigma(y^+)\leq\eta(y^+,\tilde y)\leq\eta(\tilde y,\tilde y)=\sigma(\tilde y)
+\sigma(y^+)\leq\eta(y^+,\tilde y)=\sigma(\tilde y)+(\theta^2-2\theta)z'Vz\leq \sigma(\tilde y).
 \end{equation}
+:::
+
+
+ majorization
 This is the *sandwich inequality* from majorization theory, which says that a
 majorization step decreases the loss function value. 
 
@@ -130,13 +141,19 @@ Minimizing $f$ over $V\gtrsim W$ is a convex problem, which we can
 formulate as the linear semi-infinite problem of minimizing $f$
 over $V$ that satisfies $x'Vx\geq x'Wx$ for all $x'x=1$.
 
-The R program .. is a simple cutting plane algorithm to do just that.
-It is not optimized in any way, and it will probably fail for large 
-$n$. We start with the $n$ inequalities $v\geq w$, where $v:=\text{diag(v)}$ and $w:=\text{diag(W)}$. This gives $v^{(1)}=w$ and $f(v^{(1)})=\text{tr}(W)$.
-If we have a solution $v^{(k)}$ then we compute the smallest eigenvalue
-of $\lambda_{\text{min}}(V^{(k)}-W)$ and the corresponding eigenvector $x^{(k)}$. If
-the eigenvalue
+The R program myCutter() is a simple cutting plane algorithm to do just that.
+It is not optimized in any way, and it will probably fail for large
+$n$. The basic idea is to approximate the feasible region $V\gtrsim W$
+from the outside by a compact convex polyhedron. 
+We start with the $n$ inequalities $v_{ii}\geq w_{ii}$. 
+Then minimize the objective function by linear programming (using lpSolve, @berkelaar_24). This will give a minimum attained at a vertex of the polyhedron. At this vertex the smallest eigenvalue (computed with RSpectra, @qiu_mei_24) of $V-W$ will be negative. If $x$ is the corresponding normalized eigenvector then we add the contraint $x'Vx\geq x'Wx$ and solve the linear program with this added inequality,
+which cuts off the vertex that defined the current solution. The minimum valueof the loss function will increase, and we continue until we have convergence.
 
+Thus the number of inequality constraints increases by one in each iteration.
+The algorithm is wasteful because it does not prune the inequalities, and
+because each linear programming solution is started from scratch, without
+taking into account that two successive programs only differ by one
+inequality constraint.
 
 ## Examples
 
