@@ -79,10 +79,10 @@ Our problem is to minimize $\sigma$ over $y\in\mathcal{Y}$.
 Suppose $\tilde y$ is some element of $\mathcal{Y}$, with loss function value
 $\sigma(\tilde y)$. We want to find an element of $\mathcal{Y}$ which is
 better than $\tilde y$, i.e. has a lower value of loss.
- in the Loewner sense, i.e $V-W$ is positive semidefinite. 
+Suppose $V$ is such that $V\gtrsim W$ in the Loewner sense, i.e $V-W$ is positive semidefinite. 
 
-::: {#lem-major}
-Suppose $V\gtrsim W$.Define $z:=V^{-1}W(x-\tilde y)$ and $y^+:=\tilde y+\theta z$, with $0\leq\theta\leq 2$. Then $\sigma(y^+)\leq\sigma(\tilde y)$.
+::: {#lem-major1}
+Suppose $V\gtrsim W$. Define $z:=V^{-1}W(x-\tilde y)$ and $y^+:=\tilde y+\theta z$, with $0<\theta<2$. Then $\sigma(y^+)\leq\sigma(\tilde y)$.
 :::
 
 ::: {.proof}
@@ -101,6 +101,15 @@ Now $y^+-\tilde y=\theta z$ and thus
 \begin{equation}
 \sigma(y^+)\leq\eta(y^+,\tilde y)=\sigma(\tilde y)+(\theta^2-2\theta)z'Vz\leq \sigma(\tilde y).
 \end{equation}
+:::
+
+::: {#lem-major2}
+Suppose $V\gtrsim W$. Define $y^+\in\mathop{\text{argmin}}_{y\in\mathcal{Y}}\eta(y,\tilde y)$. Then $\sigma(y^+)\leq\sigma(\tilde y)$.
+:::
+::: {.proof}
+$$
+\sigma(y^+)\leq\eta(y^+,\tilde y)\leq\eta(\tilde y,\tilde y)=\sigma(\tilde y)
+$$
 :::
 
 
@@ -139,16 +148,15 @@ $V=\nu D$. $\nu D\gtrsim W$ $\nu I\gtrsim D^{-1}W$ $\nu\geq\lambda_{\text{max}}(
 Find the smallest diagonal matrix $V\gtrsim W$. We define "smallest" as
 minimizing the trace $\text{tr}\ V$.
 Minimizing $f$ over $V\gtrsim W$ is a convex problem, which we can
-formulate as the linear semi-infinite problem of minimizing $f$
-over $V$ that satisfies $x'Vx\geq x'Wx$ for all $x'x=1$.
+formulate as the linear semi-infinite problem (or, equivalently, the semi-definite problem) of minimizing $f$ over $V$ that satisfies $x'Vx\geq x'Wx$ for all $x'x=1$.
 
 The R program myCutter() is a simple cutting plane algorithm to do just that.
 It is not optimized in any way, and it will probably fail for large
 $n$. The basic idea is to approximate the feasible region $V\gtrsim W$
 from the outside by a compact convex polyhedron. 
 We start with the $n$ inequalities $v_{ii}\geq w_{ii}$. 
-Then minimize the objective function by linear programming (using lpSolve, @berkelaar_24). This will give a minimum attained at a vertex of the polyhedron. At this vertex the smallest eigenvalue (computed with RSpectra, @qiu_mei_24) of $V-W$ will be negative. If $x$ is the corresponding normalized eigenvector then we add the contraint $x'Vx\geq x'Wx$ and solve the linear program with this added inequality,
-which cuts off the vertex that defined the current solution. The minimum valueof the loss function will increase, and we continue until we have convergence.
+Then minimize the objective function by linear programming (using lpSolve, @berkelaar_24). This will give a minimum attained at a vertex of the polyhedron. At this vertex the smallest eigenvalue (computed with RSpectra, @qiu_mei_24) of $V-W$ will be negative. If $x$ is the corresponding normalized eigenvector then we add the contraint $x'Vx\geq x'Wx$ and solve the new linear program with this added inequality,
+which cuts off the vertex that defined the current solution. The minimum value of the loss function will increase, and we continue until we have convergence.
 
 Thus the number of inequality constraints increases by one in each iteration.
 The algorithm is wasteful because it does not prune the inequalities, and

@@ -6,6 +6,7 @@ m <- 15
 set.seed(12345)
 w <- crossprod(matrix(rnorm(n * m), n, m)) / n
 
+
 myCutter <- function(w,
                      f.obj = rep(1, nrow(w)),
                      itmax = 1000,

@@ -249,7 +249,7 @@
 
 \title{Majorizing Least Squares Loss functions}
 \author{Jan de Leeuw}
-\date{October 16, 2025}
+\date{October 17, 2025}
 \begin{document}
 \maketitle
 \begin{abstract}
@@ -300,12 +300,12 @@ Define the least squares loss function \[
 Suppose \(\tilde y\) is some element of \(\mathcal{Y}\), with loss
 function value \(\sigma(\tilde y)\). We want to find an element of
 \(\mathcal{Y}\) which is better than \(\tilde y\), i.e.~has a lower
-value of loss.
+value of loss. We assue we have a \(V\) with \(V\gtrsim W\) in the
+Loewner sense, i.e \(V-W\) is positive semidefinite.
 
-\begin{lemma}[]\protect\hypertarget{lem-major}{}\label{lem-major}
+\begin{lemma}[]\protect\hypertarget{lem-major1}{}\label{lem-major1}
 
-Suppose \(V\gtrsim W\) in the Loewner sense, i.e \(V-W\) is positive
-semidefinite. Define \(z:=V^{-1}W(x-\tilde y)\) and
+Suppose \(V\gtrsim W\). Define \(z:=V^{-1}W(x-\tilde y)\) and
 \(y^+:=\tilde y+\theta z\), with \(0\leq\theta\leq 2\). Then
 \(\sigma(y^+)\leq\sigma(\tilde y)\).
 
@@ -322,6 +322,20 @@ Because \(y=\tilde y+(y-\tilde y)\) we have \begin{equation}
 \(y=\tilde y\). Now \(y^+-\tilde y=\theta z\) and thus \begin{equation}
 \sigma(y^+)\leq\eta(y^+,\tilde y)=\sigma(\tilde y)+(\theta^2-2\theta)z'Vz\leq \sigma(\tilde y).
 \end{equation}
+\end{proof}
+
+\begin{lemma}[]\protect\hypertarget{lem-major2}{}\label{lem-major2}
+
+Suppose \(V\gtrsim W\). Define
+\(y^+\in\mathop{\text{argmin}}_{y\in\mathcal{Y}}\eta(y,\tilde y)\). Then
+\(\sigma(y^+)\leq\sigma(\tilde y)\).
+
+\end{lemma}
+
+\begin{proof}
+\[
+\sigma(y^+)\leq\eta(y^+,\tilde y)\leq\eta(\tilde y,\tilde y)=\sigma(\tilde y)
+\]
 \end{proof}
 
 majorization This is the \emph{sandwich inequality} from majorization
